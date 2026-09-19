@@ -1,34 +1,11 @@
-BUILD := \
-	poster \
-
-
-DEPS := \
-	beamerthemegemini.sty \
-	beamercolorthemegemini.sty \
-	beamercolorthememit.sty \
-	beamercolorthemelabsix.sty \
-	beamercolorthemeheriotwatt.sty \
-
-
-LATEX  := lualatex
-BIBTEX := bibtex
-
-TARGETS := $(patsubst %, %.pdf, $(BUILD))
-
-# phony targets
-
-all: $(TARGETS)
-
+LATEX := tectonic
+FIGURES := $(wildcard figures/*.pdf)
+.PHONY: all poster preview clean
+all: poster
+poster: poster.pdf
+poster.pdf: poster.tex beamerthemegemini.sty beamercolorthemeheriotwatt.sty $(FIGURES)
+	$(LATEX) -X compile --keep-logs poster.tex
+preview: poster.pdf
+	pdftoppm -r 40 -png -singlefile poster.pdf poster_preview
 clean:
-	rm -rf *.pdf *.aux *.bbl *.blg *.log *.nav *.out *.snm *.toc
-
-.PHONY: all clean
-
-# main targets
-
-poster.pdf: poster.tex poster.bib $(DEPS)
-	$(eval SRC_$@ = $(patsubst %.tex, %, $<))
-	$(LATEX) $(SRC_$@)
-	$(BIBTEX) $(SRC_$@)
-	$(LATEX) $(SRC_$@)
-	$(LATEX) $(SRC_$@)
+	rm -f poster.pdf poster.log poster_preview.png poster.aux poster.nav poster.out poster.snm poster.toc

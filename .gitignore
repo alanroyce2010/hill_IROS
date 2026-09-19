@@ -1,0 +1,9 @@
+poster.pdf
+poster_preview.png
+*.aux
+*.log
+*.nav
+*.out
+*.snm
+*.toc
+.DS_Store

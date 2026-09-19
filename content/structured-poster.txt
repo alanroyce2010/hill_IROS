@@ -1,0 +1,102 @@
+# Structured poster text
+
+Abstract condensed from the ICRA 2027 submission.
+
+Non-Smooth Equilibria in Hill-Type Muscle Models
+
+A Quantified Consequence for Linearization-Based Control
+
+Alan Royce Gabriel Samuel · Indian Institute of Technology Madras
+
+IROS 2026 · Workshop on Neuromuscular Robotics · Poster 5
+
+ABSTRACT
+
+Hill-type muscle models with switched activation dynamics have four directional linearizations at equilibrium. In a simulated elbow, choosing the wrong branch causes 14–75% prediction error. In closed-loop MPC, relinearizing at the measured state reduces lowering overshoot from 0.37° to 0.02°, showing that branch selection matters for prediction and transient control.
+
+INTRODUCTION
+
+Muscle models connect excitation to force in prostheses, exoskeletons, FES and tendon-driven robots. LQR and successive-linearization MPC use a local Jacobian to predict motion [1,2].
+But an equilibrium lies on two switches: excitation equals activation, and fibre velocity is zero. The perturbation direction selects one of four local models.
+We quantify the prediction error and test how much of it survives feedback.
+
+FIGURE 1 · PROJECT OVERVIEW
+
+MUSCLE + JOINT
+
+Excitation → activation→ force → elbow angle
+
+TWO SWITCHES
+
+u* = a*v* = 0
+
+FOUR MODELS
+
+Activation branch ×velocity branch
+
+CONTROL TEST
+
+Prediction horizon+ closed-loop MPC
+
+Wrong branch: 14–75% prediction error  |  Relinearize: 0.37° → 0.02° lowering overshoot
+
+Figure 1. From equilibrium switching to controller performance. Read the active branch and update the local model at the measured state.
+
+RELATED WORK
+
+Hill-type modelling. Thelen models activation and force generation; Millard et al. characterize computational muscle formulations [1,2].
+Smoothing. Kirsch et al. smooth torque–velocity dynamics; De Groote et al. smooth activation for optimization [3,4]. Here we measure the cost of branch choice at equilibrium.
+Non-smooth systems. Camlibel et al. give continuity conditions for bimodal linear systems [5]. Yeo et al. study a distinct force–length instability, not the activation-switch control problem [6].
+
+FORMULATION / MODEL
+
+Plant: one elbow, a forearm–hand pendulum, and a rigid-tendon Hill-type brachialis. Muscle parameters follow Holzbaur; moment arms follow Murray [7,8].
+State x = [θ, θ̇, a]ᵀ; input u is neural excitation.
+Iθ̈ = Fᴹᵀ r(θ) − mglc sin θv = −r(θ)θ̇ / l₀ᴹ
+
+ȧ = (u − a) / τa
+τa = τact (0.5 + 1.5a), when u > aτa = τdeact / (0.5 + 1.5a), when u ≤ a
+
+Figure 2. At θ* = 60° and a* = 0.113, the activation slope ratio is 7.45 and the velocity slope ratio is 2.
+
+Four local models: δẋ = Aᵢδx + Bᵢδu.
+Each switch satisfies A₁ − A₂ = ecᵀ and B₁ − B₂ = ed [5]; the two switches affect different Jacobian entries.
+MPC: 10 ms sampling, 20-step horizon. Compare rules using the same plant and controller weights.
+
+RESULTS
+
+Prediction: 14–75% wrong-branch error
+Matched-branch error stays near 1% at the reference posture. With both branches wrong, error is ≥23% at every tested single-muscle equilibrium for activating steps.
+
+Figure 3. Response to a +0.01 excitation step: branch errors separate within 50–100 ms.
+
+Feedback: transient quality remains
+Central-difference blending gives 8–9× more raising overshoot than the naive, sign-test and relinearizing rules.
+
+Figure 4. Raising and lowering steps. Updating the model at the measured state reduces lowering overshoot.
+
+Table 1. Overshoot and sine-tracking RMS, degrees.
+
+Co-contraction can cancel the joint velocity kink, while adding a second activation switch.
+Unmodelled delay can cause divergence; a predictor restored stability in the tested cases. Tracking rankings depend on weights and noise.
+
+CONCLUSION
+
+Choose the branch as well as the operating point.
+1. Equilibria of the studied switched Hill-type model require directional local linearizations.
+2. Branch mismatch causes substantial prediction errors. Feedback reduces the effect to transient quality in the tested delay-free cases.
+3. Relinearize at the measured state, avoid central differences across a kink, and compensate delay.
+Limits: simulation only; one joint, one or two muscles; no reflexes, short-range stiffness or history dependence. Hardware validation remains open.
+
+REFERENCES
+
+[1] Thelen DG (2003). Adjustment of muscle mechanics model parameters to simulate dynamic contractions in older adults. J Biomech Eng 125:70–77.
+[2] Millard M et al. (2013). Flexing computational muscle: modeling and simulation of musculotendon dynamics. J Biomech Eng 135:021005.
+[3] Kirsch NA et al. (2018). Model-based dynamic control allocation in a hybrid neuroprosthesis. IEEE TNSRE 26:224–232.
+[4] De Groote F et al. (2016). Evaluation of direct collocation optimal control problem formulations for solving the muscle redundancy problem. Ann Biomed Eng 44:2922–2936.
+[5] Camlibel MK, Heemels WPMH, Schumacher JM (2008). A full characterization of stabilizability of bimodal piecewise linear systems with scalar inputs. Automatica 44:1261–1267.
+[6] Yeo SH et al. (2023). Numerical instability of Hill-type muscle models. J R Soc Interface 20:20220430.
+[7] Holzbaur KRS, Murray WM, Delp SL (2005). A model of the upper extremity for simulating musculoskeletal surgery and analyzing neuromuscular control. Ann Biomed Eng 33:829–840.
+[8] Murray WM, Delp SL, Buchanan TS (1995). Variation of muscle moment arms with elbow and forearm position. J Biomech 28:513–525.
+
+bs22b001@smail.iitm.ac.in  |  github.com/alanroyce2010/hill_IROS  |  Layout adapted from SciFig AI Classic Navy

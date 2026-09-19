@@ -1,0 +1,1 @@
+Hill-type muscle models with switched activation dynamics have four directional linearizations at equilibrium. In a simulated elbow, choosing the wrong branch causes 14–75% prediction error. In closed-loop MPC, relinearizing at the measured state reduces lowering overshoot from 0.37° to 0.02°, showing that branch selection matters for prediction and transient control.

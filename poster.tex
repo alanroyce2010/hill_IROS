@@ -14,7 +14,7 @@
 \usecolortheme{slatemagenta}
 
 % headline type: the title is long, so a notch below the theme's \Huge
-\setbeamerfont{headline title}{size=\huge,series=\bfseries}
+\setbeamerfont{headline title}{size=\Huge,series=\bfseries}
 
 % tighter vertical rhythm than the theme's default: this poster is dense
 \setlength{\abovecaptionskip}{1ex}
@@ -36,8 +36,8 @@
 % (N+1)*\sepwidth + N*\colwidth = \paperwidth, with N = 3
 \newlength{\sepwidth}
 \newlength{\colwidth}
-\setlength{\sepwidth}{0.022\paperwidth}
-\setlength{\colwidth}{0.3040\paperwidth}
+\setlength{\sepwidth}{0.015\paperwidth}
+\setlength{\colwidth}{0.4140\paperwidth}
 
 \newcommand{\separatorcolumn}{\begin{column}{\sepwidth}\end{column}}
 
@@ -61,8 +61,7 @@
 % Title
 % ====================
 
-\title{Non-Smooth Equilibria in Hill-Type Muscle Models:\\
-a Quantified Consequence for Linearization-Based Control}
+\title{Non-Smooth Equilibria in Hill-Type Muscle Models}
 
 \author{Alan Royce Gabriel Samuel}
 
@@ -94,81 +93,36 @@ a Quantified Consequence for Linearization-Based Control}
 % ==================== column 1 ====================
 \begin{column}{\colwidth}
 
-  \begin{block}{\chip{1} The question}
+  \begin{block}{\chip{1} Abstract}
 
-    Controllers for muscle-actuated systems (prostheses, exosuits,
-    neuromuscular robots) lean on \textbf{equilibrium linearization}: LQR,
-    successive-linearization MPC. That design assumes \textbf{one}
-    well-defined local linear model at each operating point.
+    Hill-type muscle models with switched activation dynamics have four directional linearizations at equilibrium. In a simulated elbow, choosing the wrong branch causes 14–75\% prediction error. In closed-loop MPC, relinearizing at the measured state reduces lowering overshoot from 0.37° to 0.02°, showing that branch selection matters for prediction and transient control.
 
-    \textbf{Does a Hill-type muscle model have one?} If not, does it matter
-    for control, or is it a curiosity?
-
-    \aside{Distinct from Yeo et al.\ (2023): their instability is a
-    negative-stiffness eigenvalue on the force-length descending limb;
-    activation dynamics is outside their scope.}
 
   \end{block}
 
-  \begin{block}{\chip{2} Two switches sit on every equilibrium}
+  \begin{block}{INTRODUCTION}
 
-    Thelen (2003) activation dynamics switches its time constant on whether
-    excitation exceeds activation:
-    \begin{equation*}
-      \dot a = \frac{u-a}{\tau_a},\qquad
-      \tau_a = \begin{cases}
-        \tau_{\mathrm{act}}\,(0.5+1.5a), & u > a\\[0.4ex]
-        \tau_{\mathrm{deact}}/(0.5+1.5a), & u \le a
-      \end{cases}
-    \end{equation*}
-    Any equilibrium needs $\mathbf{u^\ast = a^\ast}$: exactly on the switch.
-    The force-velocity relation (Katz 1939) switches between shortening and
-    lengthening; any equilibrium needs \textbf{zero velocity}: on that switch
-    too.
+    Muscle models connect excitation to force in prostheses, exoskeletons, FES and tendon-driven robots. LQR and successive-linearization MPC use a local Jacobian to predict motion [1,2]. 
+    
+    But an equilibrium lies on two switches: excitation equals activation, and fibre velocity is zero. The perturbation direction selects one of four local models. 
+    
+    We quantify the prediction error and test how much of it survives feedback.
 
-    \begin{figure}
-      \centering
-      \includegraphics[width=0.96\textwidth]{fig1_kinks.pdf}
-      \caption{Both kinks at the model's own equilibrium
-      ($\theta^\ast = 60$\dg, $a^\ast = 0.113$). Both are literature-cited
-      muscle physiology, not modelling artefacts.}
-    \end{figure}
-
-    The one-sided slopes differ by
-    \begin{equation*}
-      \rho_a(a^\ast) = \frac{\tau_{\mathrm{deact}}}{\tau_{\mathrm{act}}(0.5+1.5a^\ast)^2}
-      = \begin{cases} 13.3 & a^\ast = 0\\ 7.45 & a^\ast = 0.113\\ 1 & a^\ast = 0.884\end{cases}
-      \qquad \rho_v = 2
-    \end{equation*}
-    with $\rho_v$ exact ($F_{\mathrm{len}}$ cancels at $v=0$). ``The''
-    linearization at an equilibrium is therefore a set of \textbf{four} local
-    linear models, selected by the perturbation direction.
 
   \end{block}
 
-  \begin{block}{\chip{3} Formalized as bimodal piecewise-linear systems}
+  \begin{block}{RELATED WORK}
 
-    Camlibel, Heemels and Schumacher (2008):
-    $\dot x = A_i x + b_i u$ on either side of $y = c^{\!\top} x + du = 0$,
-    vector field continuous iff a vector $e$ exists with
-    \begin{equation*}
-      A_1 - A_2 = e\,c^{\!\top}, \qquad b_1 - b_2 = e\,d .
-    \end{equation*}
-    Both switches satisfy this \textbf{exactly} (residual $0.0$, checked
-    algebraically), with the state $[\theta,\dot\theta,a]$:
-    \begin{align*}
-      \text{activation:} && c &= [0,0,-1], & d &= 1, & e &= [0,\,0,\,-86.3]\\
-      \text{velocity:}   && c &= [0,1,0],  & d &= 0, & e &= [0,\,-12.6,\,0]
-    \end{align*}
-    \aside{Mode 1 is the $y \le 0$ side: deactivating, lengthening.}
+    Hill-type modelling. Thelen models activation and force generation; Millard et al. characterize computational muscle formulations [1,2].
+    
+    Smoothing. Kirsch et al. smooth torque–velocity dynamics; De Groote et al. smooth activation for optimization [3,4]. Here we measure the cost of branch choice at equilibrium.
+    
+    Non-smooth systems. Camlibel et al. give continuity conditions for bimodal linear systems [5]. Yeo et al. study a distinct force–length instability, not the activation-switch control problem [6].
 
-    The two $e$ vectors have \textbf{disjoint support}: the four-mode local
-    system is the \textbf{direct sum of two independent bimodal switches}, so
-    the single-switch theory suffices.
 
   \end{block}
 
-  \begin{block}{\chip{4} Model}
+  \begin{block}{MODEL}
 
     Elbow joint, forearm $+$ hand pendulum (de Leva 1996), driven by
     \textbf{brachialis}: Thelen (2003) rigid-tendon Hill model, Holzbaur et
@@ -211,7 +165,7 @@ a Quantified Consequence for Linearization-Based Control}
 
     \begin{figure}
       \centering
-      \includegraphics[width=0.96\textwidth]{fig2_prediction.pdf}
+      \includegraphics[width=0.96\textwidth]{figures/fig2_prediction.pdf}
       \caption{The matched branch tracks the truth almost exactly; the three
       mismatched branches diverge within 50 to 100\,ms.}
     \end{figure}
@@ -245,7 +199,7 @@ a Quantified Consequence for Linearization-Based Control}
 
     \begin{figure}
       \centering
-      \includegraphics[width=0.96\textwidth]{fig3_equilibria.pdf}
+      \includegraphics[width=0.96\textwidth]{figures/fig3_equilibria.pdf}
       \caption{Held-load sweep at 60\dg. The activation-branch error follows
       $\rho_a(a^\ast)$ exactly and vanishes at $a^\ast = 0.884$; the
       velocity-branch error grows to take its place.}
@@ -271,7 +225,7 @@ a Quantified Consequence for Linearization-Based Control}
 
     \begin{figure}
       \centering
-      \includegraphics[width=0.96\textwidth]{fig4_closedloop.pdf}
+      \includegraphics[width=0.96\textwidth]{figures/fig4_closedloop.pdf}
       \caption{Up: the blended model averages the fast and slow activation
       branches. Down: the sign test overshoots 0.37\dg, relinearization
       0.02\dg.}
@@ -311,122 +265,122 @@ a Quantified Consequence for Linearization-Based Control}
 \separatorcolumn
 
 % ==================== column 3 ====================
-\begin{column}{\colwidth}
+% \begin{column}{\colwidth}
 
-  \begin{block}{\chip{8} Result 4: antagonist pair}
+%   \begin{block}{\chip{8} Result 4: antagonist pair}
 
-    Add a lumped lateral $+$ medial triceps (Holzbaur 2005). The two
-    force-velocity kinks share the switching function $\dot\theta$:
-    \textbf{3 switches, 8 modes}, all continuous with disjoint $e$. The direct
-    sum carries over.
+%     Add a lumped lateral $+$ medial triceps (Holzbaur 2005). The two
+%     force-velocity kinks share the switching function $\dot\theta$:
+%     \textbf{3 switches, 8 modes}, all continuous with disjoint $e$. The direct
+%     sum carries over.
 
-    What changes is the size of the velocity kink. With $D_i$ each muscle's
-    shortening-side damping,
-    \begin{equation*}
-      \rho_v = \frac{2D_b + D_t}{D_b + 2D_t}
-      = \begin{cases} 2 & \text{triceps off}\\ 1 & D_b = D_t\end{cases}
-    \end{equation*}
+%     What changes is the size of the velocity kink. With $D_i$ each muscle's
+%     shortening-side damping,
+%     \begin{equation*}
+%       \rho_v = \frac{2D_b + D_t}{D_b + 2D_t}
+%       = \begin{cases} 2 & \text{triceps off}\\ 1 & D_b = D_t\end{cases}
+%     \end{equation*}
 
-    \begin{figure}
-      \centering
-      \includegraphics[width=0.96\textwidth]{fig5_pair.pdf}
-      \caption{Sweep at 60\dg. Left: slope ratio with Murray's triceps moment
-      arm (blue; 1 at $a_t^\ast = 0.264$, $a_b^\ast = 0.514$) and scaled by
-      0.81 to match Holzbaur (green; never reaches 1). Centre, right:
-      wrong-branch errors, Murray curve.}
-    \end{figure}
+%     \begin{figure}
+%       \centering
+%       \includegraphics[width=0.96\textwidth]{fig5_pair.pdf}
+%       \caption{Sweep at 60\dg. Left: slope ratio with Murray's triceps moment
+%       arm (blue; 1 at $a_t^\ast = 0.264$, $a_b^\ast = 0.514$) and scaled by
+%       0.81 to match Holzbaur (green; never reaches 1). Centre, right:
+%       wrong-branch errors, Murray curve.}
+%     \end{figure}
 
-    \textbf{Co-contraction shrinks the velocity kink} from 2 to within 7\% of
-    1 for both triceps curves (scaled curve at $a_t^\ast = 0.72$), at the cost
-    of a second activation switch and higher effort: a role smooth models
-    cannot express.
+%     \textbf{Co-contraction shrinks the velocity kink} from 2 to within 7\% of
+%     1 for both triceps curves (scaled curve at $a_t^\ast = 0.72$), at the cost
+%     of a second activation switch and higher effort: a role smooth models
+%     cannot express.
 
-    \aside{Soft spot: triceps moment arm averages 2.59 vs Holzbaur's 2.1\,cm;
-    $\times 0.81$ gives 1.87 vs about 2.0\,cm at 90\dg.}
+%     \aside{Soft spot: triceps moment arm averages 2.59 vs Holzbaur's 2.1\,cm;
+%     $\times 0.81$ gives 1.87 vs about 2.0\,cm at 90\dg.}
 
-  \end{block}
+%   \end{block}
 
-  \begin{block}{\chip{9} Robustness}
+%   \begin{block}{\chip{9} Robustness}
 
-    \begin{itemize}
-      \item \textbf{Same structure elsewhere:} biceps, brachioradialis,
-        old-adult and OpenSim constants, elastic tendon: exact continuity,
-        disjoint $e$, $\rho_v = 2$; wrong branch \textbf{9 to 80\%}.
-      \item \textbf{Local certificate:} a common quadratic Lyapunov function
-        certifies the local loop for 4 of 5 fixed designs and for correctly
-        classified modes; the $\nu$-gap cannot.
-      \item \textbf{Pattern holds} under 5 to 40\,ms sample times, noise,
-        estimated activation and plant mismatch: sign test down overshoot 0.15
-        to 0.58\dg, relinearization at most 0.03.
-      \item \textbf{Weighting:} the overshoot pattern survives a fourfold
-        input-weight change; the sinusoid ranking does not (4$r$: smoothed
-        act.\ 0.177 and sign test 0.182 beat relinearization 0.198). Even with
-        no overshoot, sinusoid errors differ 60\%: the weighting decides which
-        rule wins.
-      \item \textbf{Unmodelled delay breaks it} (50\,ms: blended and sign test
-        diverge). \textbf{A predictor restores it}: at 20 and 50\,ms, with a
-        25\% model error, no rule diverges; sign test down 0.34 to 0.44\dg,
-        relinearization at most 0.04.
-    \end{itemize}
+%     \begin{itemize}
+%       \item \textbf{Same structure elsewhere:} biceps, brachioradialis,
+%         old-adult and OpenSim constants, elastic tendon: exact continuity,
+%         disjoint $e$, $\rho_v = 2$; wrong branch \textbf{9 to 80\%}.
+%       \item \textbf{Local certificate:} a common quadratic Lyapunov function
+%         certifies the local loop for 4 of 5 fixed designs and for correctly
+%         classified modes; the $\nu$-gap cannot.
+%       \item \textbf{Pattern holds} under 5 to 40\,ms sample times, noise,
+%         estimated activation and plant mismatch: sign test down overshoot 0.15
+%         to 0.58\dg, relinearization at most 0.03.
+%       \item \textbf{Weighting:} the overshoot pattern survives a fourfold
+%         input-weight change; the sinusoid ranking does not (4$r$: smoothed
+%         act.\ 0.177 and sign test 0.182 beat relinearization 0.198). Even with
+%         no overshoot, sinusoid errors differ 60\%: the weighting decides which
+%         rule wins.
+%       \item \textbf{Unmodelled delay breaks it} (50\,ms: blended and sign test
+%         diverge). \textbf{A predictor restores it}: at 20 and 50\,ms, with a
+%         25\% model error, no rule diverges; sign test down 0.34 to 0.44\dg,
+%         relinearization at most 0.04.
+%     \end{itemize}
 
-  \end{block}
+%   \end{block}
 
-  \begin{alertblock}{\chip{10} Take-home}
+%   \begin{alertblock}{\chip{10} Take-home}
 
-    \begin{itemize}
-      \item Every equilibrium of a Hill-type muscle model is
-        \textbf{non-smooth}: two independent, literature-grounded switches,
-        verified exactly against bimodal piecewise-linear theory.
-      \item For prediction it is \textbf{never negligible}: 14 to 75\% of the
-        signal at the representative posture; with both branches wrong, at
-        least 23\% of an activating step at every equilibrium tested.
-      \item Closed loop makes it a \textbf{transient-quality} problem:
-        \textbf{relinearize at the measured state}, read the branch from it,
-        never central-difference through the kink. \textbf{Smoothing only the
-        activation switch keeps most of the cost.} Compensate delay with a
-        predictor.
-      \item With an antagonist, \textbf{co-contraction shrinks the velocity
-        kink toward cancellation}.
-    \end{itemize}
+%     \begin{itemize}
+%       \item Every equilibrium of a Hill-type muscle model is
+%         \textbf{non-smooth}: two independent, literature-grounded switches,
+%         verified exactly against bimodal piecewise-linear theory.
+%       \item For prediction it is \textbf{never negligible}: 14 to 75\% of the
+%         signal at the representative posture; with both branches wrong, at
+%         least 23\% of an activating step at every equilibrium tested.
+%       \item Closed loop makes it a \textbf{transient-quality} problem:
+%         \textbf{relinearize at the measured state}, read the branch from it,
+%         never central-difference through the kink. \textbf{Smoothing only the
+%         activation switch keeps most of the cost.} Compensate delay with a
+%         predictor.
+%       \item With an antagonist, \textbf{co-contraction shrinks the velocity
+%         kink toward cancellation}.
+%     \end{itemize}
 
-  \end{alertblock}
+%   \end{alertblock}
 
-  \begin{block}{\chip{11} Limits and next steps}
+%   \begin{block}{\chip{11} Limits and next steps}
 
-    \begin{itemize}
-      \item One simulated joint; no reflexes, short-range stiffness or history
-        dependence. The relinearization rule remains untested on hardware.
-      \item Relinearization tracks the sinusoid best only without noise at the
-        baseline weighting; under 0.05\dg\ angle noise the sign test wins
-        (0.175 vs 0.195\dg).
-      \item Experimental question: does measured co-contraction symmetrize
-        directional joint damping?
-    \end{itemize}
+%     \begin{itemize}
+%       \item One simulated joint; no reflexes, short-range stiffness or history
+%         dependence. The relinearization rule remains untested on hardware.
+%       \item Relinearization tracks the sinusoid best only without noise at the
+%         baseline weighting; under 0.05\dg\ angle noise the sign test wins
+%         (0.175 vs 0.195\dg).
+%       \item Experimental question: does measured co-contraction symmetrize
+%         directional joint damping?
+%     \end{itemize}
 
-  \end{block}
+%   \end{block}
 
-  \begin{exampleblock}{References}
+%   \begin{exampleblock}{References}
 
-    {\footnotesize
-    Thelen DG (2003) \emph{J Biomech Eng} 125:70--77.
-    Winters JM (1995) \emph{Ann Biomed Eng} 23:359--374.
-    Katz B (1939) \emph{J Physiol} 96:45--64.
-    Millard M et al.\ (2013) \emph{J Biomech Eng} 135:021005.
-    Holzbaur KRS, Murray WM, Delp SL (2005) \emph{Ann Biomed Eng} 33:829--840.
-    Murray WM, Delp SL, Buchanan TS (1995) \emph{J Biomech} 28:513--525.
-    de Leva P (1996) \emph{J Biomech} 29:1223--1230.
-    Camlibel MK, Heemels WPMH, Schumacher JM (2008) \emph{Automatica}
-    44:1261--1267.
-    Yeo SH, Verheul J, Herzog W, Sueda S (2023) \emph{J R Soc Interface}
-    20:20220430.
-    Zajac FE (1989) \emph{Crit Rev Biomed Eng} 17:359--411.
-    De Groote F, Kinney AL, Rao AV, Fregly BJ (2016) \emph{Ann Biomed Eng}
-    44:2922--2936.
-    \par}
+%     {\footnotesize
+%     Thelen DG (2003) \emph{J Biomech Eng} 125:70--77.
+%     Winters JM (1995) \emph{Ann Biomed Eng} 23:359--374.
+%     Katz B (1939) \emph{J Physiol} 96:45--64.
+%     Millard M et al.\ (2013) \emph{J Biomech Eng} 135:021005.
+%     Holzbaur KRS, Murray WM, Delp SL (2005) \emph{Ann Biomed Eng} 33:829--840.
+%     Murray WM, Delp SL, Buchanan TS (1995) \emph{J Biomech} 28:513--525.
+%     de Leva P (1996) \emph{J Biomech} 29:1223--1230.
+%     Camlibel MK, Heemels WPMH, Schumacher JM (2008) \emph{Automatica}
+%     44:1261--1267.
+%     Yeo SH, Verheul J, Herzog W, Sueda S (2023) \emph{J R Soc Interface}
+%     20:20220430.
+%     Zajac FE (1989) \emph{Crit Rev Biomed Eng} 17:359--411.
+%     De Groote F, Kinney AL, Rao AV, Fregly BJ (2016) \emph{Ann Biomed Eng}
+%     44:2922--2936.
+%     \par}
 
-  \end{exampleblock}
+%   \end{exampleblock}
 
-\end{column}
+% \end{column}
 
 \separatorcolumn
 \end{columns}

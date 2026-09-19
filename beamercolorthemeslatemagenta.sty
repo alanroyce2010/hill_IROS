@@ -1,0 +1,69 @@
+% Colour theme for the Gemini beamerposter theme, matching the palette this
+% project's deliverables already use (~/.claude/web-color-theme.md): white
+% canvas, dark-slate text, magenta accent used sparingly, light-gray panels.
+
+% ====================
+% Definitions
+% ====================
+
+\definecolor{ink}{HTML}{34495E}          % primary text (dark slate)
+\definecolor{muted}{HTML}{6B7A89}        % captions, secondary text
+\definecolor{accent}{HTML}{EC008B}       % brand / magenta accent
+\definecolor{accentstrong}{HTML}{C2006F} % accent pressed / active
+\definecolor{accenttint}{HTML}{FFF3F9}   % accent-filled surface, very light
+\definecolor{surface}{HTML}{F5F5F5}      % panels, wells
+\definecolor{border}{HTML}{D6D3DB}       % dividers, subtle borders
+\definecolor{borderstrong}{HTML}{A8A6AE} % emphasised borders
+\definecolor{warning}{HTML}{F1970F}      % warnings, "unstable" states
+
+% ====================
+% Theme
+% ====================
+
+% Basic colors
+\setbeamercolor{palette primary}{fg=ink,bg=white}
+\setbeamercolor{palette secondary}{fg=ink,bg=white}
+\setbeamercolor{palette tertiary}{fg=white,bg=ink}
+\setbeamercolor{palette quaternary}{fg=ink,bg=white}
+\setbeamercolor{structure}{fg=accent}
+\setbeamercolor{normal text}{fg=ink,bg=white}
+\setbeamercolor{alerted text}{fg=accentstrong}
+
+% Headline: slate band, magenta rule -- accent kept for emphasis, not body text
+\setbeamercolor{headline}{fg=white,bg=ink}
+\setbeamercolor{headline title}{fg=white}
+\setbeamercolor{headline author}{fg=white}
+\setbeamercolor{headline institute}{fg=border}
+\setbeamercolor{headline rule}{bg=accent}
+
+% Block
+\setbeamercolor{block title}{fg=accent,bg=white}
+\setbeamercolor{block separator}{bg=border}
+\setbeamercolor{block body}{fg=ink,bg=white}
+
+% Alert Block: the take-home, on the accent tint
+\setbeamercolor{block title alerted}{fg=accentstrong,bg=accenttint}
+\setbeamercolor{block separator alerted}{bg=accent}
+\setbeamercolor{block body alerted}{fg=ink,bg=accenttint}
+
+% Example Block: light-gray panel
+\setbeamercolor{block title example}{fg=ink,bg=surface}
+\setbeamercolor{block separator example}{bg=borderstrong}
+\setbeamercolor{block body example}{fg=ink,bg=surface}
+
+% Heading
+\setbeamercolor{heading}{fg=ink}
+
+% Itemize
+\setbeamercolor{item}{fg=accent}
+
+% Captions
+\setbeamercolor{caption}{fg=muted}
+\setbeamercolor{caption name}{fg=muted}
+
+% Bibliography
+\setbeamercolor{bibliography item}{fg=ink}
+\setbeamercolor{bibliography entry author}{fg=ink}
+\setbeamercolor{bibliography entry title}{fg=ink}
+\setbeamercolor{bibliography entry location}{fg=ink}
+\setbeamercolor{bibliography entry note}{fg=ink}
